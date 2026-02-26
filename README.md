@@ -35,8 +35,8 @@ A secure backend service for managing tasks with an approval workflow.
 1. Clone the repository:
 
 ```bash
-git clone <repository-url>
-cd <project-folder>
+git clone https://github.com/anurag-tarai/task-approval-service.git
+cd task-approval-service
 ```
 
 2. Build and start containers:
