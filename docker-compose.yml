@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: task-approval-service
+    ports:
+      - "8080:8080"
+    environment:
+      # Use DB_HOST variable inside Spring properties
+      - DB_HOST=db
+      - DATASOURCE_USERNAME=root
+      - DATASOURCE_PASSWORD=password
+      - SECURITY_JWT_SECRET=404E635266556A586E3272357538782F413F4428472B6250645367566B5970
+      - SECURITY_JWT_EXPIRATION=3600000
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - task-network
+
+  db:
+    image: mysql:8.0
+    container_name: task-db
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_DATABASE=vivatech_tasks
+      - MYSQL_ROOT_PASSWORD=password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - task-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ppassword"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mysql_data:
+
+networks:
+  task-network:
+    driver: bridge
